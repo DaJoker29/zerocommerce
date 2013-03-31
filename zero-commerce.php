@@ -29,6 +29,12 @@
     If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+/**
+ * Check if WooCommerice is active
+ **/
+if ( in_array( 'woocommerce/woocommerce.php' , apply_filters( 'active_plugins' , get_option( 'active_plugins' ) ) ) ) {
+
 $ZeroCommerce_minimalRequiredPhpVersion = '5.0';
 
 /**
@@ -83,4 +89,5 @@ if (ZeroCommerce_PhpVersionCheck()) {
     // Only load and run the init function if we know PHP version can parse it
     include_once('zero-commerce_init.php');
     ZeroCommerce_init(__FILE__);
+}
 }
