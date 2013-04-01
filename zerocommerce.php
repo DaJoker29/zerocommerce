@@ -55,9 +55,73 @@ function zds_zerocommerce_uninstall() {
 
 }
 
-//Init Google Gateway
+//Init Google Gateway <<FIGURE OUT HOW TO MOVE CLASS TO SEPARATE FILE>>
 function zds_init_google_gateway_class() {
-	class ZDS_Gateway_Google extends WC_Payment_Gateway {}
+
+	/**
+	 * GOOGLE GATEWAY CLASS
+	 */
+	class ZDS_Gateway_Google extends WC_Payment_Gateway {
+	
+		//Constructor
+		public function	__construct() {
+			$this->id = 'zds_google';
+			$this->has_fields = false;
+
+			$this->method_title = __( 'Google checkout' , 'woocommerce');
+		
+			//Define and load settings fields
+			$this->init_form_fields();
+			$this->init_settings();
+		
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id , array( $this, 'process_admin_options' ) );
+		}
+
+		//Init form fields (admin)
+		public function init_form_fields() {
+			$this->form_fields = array(
+				'enabled' => array(
+				        'title' => __( 'Enable/Disable', 'woocommerce' ),
+				        'type' => 'checkbox',
+				        'label' => __( 'Enable Google Checkout', 'woocommerce' ),
+				        'default' => 'yes'
+				),
+				'title' => array(
+				        'title' => __( 'Title', 'woocommerce' ),
+				        'type' => 'text',
+				        'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
+				        'default' => __( 'Google Checkout', 'woocommerce' ),
+				        'desc_tip'      => true,
+				),
+				'description' => array(
+				        'title' => __( 'Customer Message', 'woocommerce' ),
+				        'type' => 'textarea',
+				        'default' => ''
+				)
+			);
+		}
+		
+		//Process Payments
+		public function process_payment($order_id) {
+			global $woocommerce;
+			$order = new WC_Order( $order_id );
+
+			//Mark as on-hold
+			$order->update_status( 'on-hold', __( 'Awaiting Google Checkout Payment' , 'woocommerce' ));
+
+			//Reduce stock levels
+			$order->reduce_order_stock();
+
+			//Remove cart
+			$woocommerce->cart->empty_cart();
+
+			//Return thankyou redirect
+			return array(
+				'result' => 'success',
+				'redirect' => $this->get_return_url( $order )
+			);
+		}
+	}
 }
 
 //Add Google Gateway
@@ -82,10 +146,9 @@ add_filter( 'woocommerce_payment_gateways' , 'zds_add_google_gateway_class' );
  * INITIALIZE
  **/
 
-//Load classes
+/* Load classes <-- NEED TO FIGURE OUT THIS ONE
 set_include_path(implode ( PATH_SEPARATOR , array( get_include_path() , './classes' ) ) );
 spl_autoload_register ();
-
-//Initialize gateways
+*/
 
 ?>
