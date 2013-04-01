@@ -76,7 +76,7 @@ class ZeroCommerce_Plugin extends ZeroCommerce_LifeCycle {
 
         // Add Actions & Filters
         // http://plugin.michael-simpson.com/?page_id=37
-
+	add_action( 'plugins_loaded' , 'init_google_gateway_class' );
 
         // Adding scripts & styles to all pages
         // Examples:
@@ -93,6 +93,23 @@ class ZeroCommerce_Plugin extends ZeroCommerce_LifeCycle {
         // http://plugin.michael-simpson.com/?page_id=41
 
     }
+	/**
+	 * Initialize Google Gateway
+	 **/
+    public function init_google_gateway_class() {
+	class ZDS_Google_Gateway extends WC_Gateway {}
+    }
+
+    /**
+     * Let Woo Commerce know about us
+     **/
+    public function add_google_gateway( $methods ) {
+	$methods[] = 'ZDS_Google_Gateway';
+	return methods;
+    }
+
+    add_filter ( 'woocommerce_payment_gateways' , 'add_google_gateway' );
+
 
 
 }

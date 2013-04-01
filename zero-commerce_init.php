@@ -50,4 +50,8 @@ function ZeroCommerce_init($file) {
 
     // Register the Plugin Deactivation Hook
     register_deactivation_hook($file, array(&$aPlugin, 'deactivate'));
+    
+    // Load up custom classes
+    set_include_path( "./classes" );
+    spl_autoload_register();
 }
