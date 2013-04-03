@@ -33,11 +33,12 @@
 //Set path constants
 define( 'ZDS_ZEROCOMMERCE_DIR' , plugin_dir_path(__FILE__));
 define( 'ZDS_ZEROCOMMERCE_URL' , plugin_dir_url(__FILE__));
-
+define( 'ZDS_CLASS_DIR' , ZDS_ZEROCOMMERCE_DIR . 'classes/' );
 
 /**
 * FUNCTIONS
 **/
+
 
 //Activation
 function zds_zerocommerce_activation() {
@@ -55,13 +56,17 @@ function zds_zerocommerce_uninstall() {
 
 }
 
-//Init Google Gateway <<FIGURE OUT HOW TO MOVE CLASS TO SEPARATE FILE>>
+//Init Gateways
 function zds_init() {
 
+    //Check if WC_Payment_Gateway exists
+    if ( !class_exists( 'WC_Payment_Gateway' ) ) return;
     //include Google Class
-    include ZDS_ZEROCOMMERCE_DIR . '/classes/zds_gateway_google.php';
-
+    set_include_path(get_include_path() . PATH_SEPARATOR . ZDS_CLASS_DIR );
+    include('zds_gateway_google.class.php');
 }
+
+
 
 //Add Google Gateway
 function zds_add_google_gateway_class($zds_methods) {
@@ -78,16 +83,12 @@ register_activation_hook(__FILE__ , 'zds_zerocommerce_activation');
 register_deactivation_hook(__FILE__ , 'zds_zerocommerce_deactivation');
 
 //Actions and Filters
-add_action( 'plugins_loaded' , 'zds_init' );
+add_action( 'plugins_loaded' , 'zds_init', 0 );
 add_filter( 'woocommerce_payment_gateways' , 'zds_add_google_gateway_class' );
 
 /**
 * INITIALIZE
 **/
 
-/* Load classes <-- NEED TO FIGURE OUT THIS ONE
-set_include_path(implode ( PATH_SEPARATOR , array( get_include_path() , './classes' ) ) );
-spl_autoload_register ();
-*/
 
 ?>

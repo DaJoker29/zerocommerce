@@ -105,6 +105,12 @@ class ZDS_Gateway_Google extends WC_Payment_Gateway {
             'redirect' => $this->get_return_url( $order )
         );
     }
+    
+    //Get Google Checkout Args
+    public function get_google_args ( $order ) {
+
+        return array();
+    }
 }
 
 
