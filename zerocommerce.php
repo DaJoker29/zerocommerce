@@ -100,10 +100,27 @@ function zds_init_google_gateway_class() {
             );
         }
 
+        //Get Google Checkout Args
+        public function get_google_args ( $order) {
+            global $woocommerce
+
+            $order_id = $order->id;
+
+            //Check if debugging logging
+            if ( 'yes' == $this->debug )
+                $this->log->add( 'google', 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
+
+            
+        }
+
         //Process Payments
         public function process_payment($order_id) {
             global $woocommerce;
             $order = new WC_Order( $order_id );
+
+            //get Google checkout args
+            $google_args = $this->get_google_args ( $order );
+
 
             //Mark as on-hold
             $order->update_status( 'on-hold', __( 'Awaiting Google Checkout Payment' , 'woocommerce' ));
