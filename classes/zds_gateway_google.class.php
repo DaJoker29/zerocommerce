@@ -7,13 +7,22 @@ class ZDS_Gateway_Google extends WC_Payment_Gateway {
 
     //Constructor
     public function	__construct() {
-        $this->id = 'zds_google';
+
+        //Load Google Classes <--Doesn't work
+        spl_autoload_register(function ($class) {
+            include 'googlecheckout/library/' . $class . '.php';
+        });
+
+        $this->id = 'google';
         $this->has_fields = false;
         $this->method_title = __( 'Google checkout' , 'woocommerce');
 
         //Define and load settings fields
         $this->init_form_fields();
         $this->init_settings();
+
+        //Define user set variables
+        $this->title = $this->get_option( 'title');
 
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id , array( $this, 'process_admin_options' ) );
     }
